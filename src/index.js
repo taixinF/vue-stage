@@ -1,5 +1,9 @@
-export const a = 11110;
+import { initMixin } from "./init";
 
-debugger;
+//将所有的方法都耦合在一起
+function Vue(options) {
+  this._init(options); //默认就调用了init
+}
+initMixin(Vue); //扩展了 init方法
 
-export default { a: 1 };
+export default Vue;
