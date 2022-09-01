@@ -1,0 +1,6 @@
+{
+    //默认使用这里的配置文件 plugins
+    "presets": [
+        "@babel/preset-env"
+    ]
+}
