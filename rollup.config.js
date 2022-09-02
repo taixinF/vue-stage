@@ -1,6 +1,6 @@
 // rollup 默认到处一个对象 作为打包的配置文件
 import babel from "rollup-plugin-babel";
-
+import resolve from "@rollup/plugin-node-resolve";
 export default {
   input: "./src/index.js", //入口
   output: {
@@ -14,6 +14,7 @@ export default {
     babel({
       exclude: "node_modules/**",
     }),
+    resolve()
   ],
 };
 
