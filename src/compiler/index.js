@@ -52,10 +52,11 @@ function gen(node) {
 function genChildren(children) {
   return children.map((child) => gen(child)).join(",");
 }
+//模板引擎的实现原理 就是with +  New Function
 //元素 属性 孩子
 function codegen(ast) {
   let children = genChildren(ast.children);
-  let code = `_C('${ast.tag},${
+  let code = `_c('${ast.tag}',${
     ast.attrs.length > 0 ? genProps(ast.attrs) : "null"
   }${ast.children.length ? `,${children}` : ""})`;
   return code;
@@ -64,8 +65,11 @@ function codegen(ast) {
 //对模板进行编译处理
 export function compileToFuncrion(template) {
   // 1 就是将template 转化成ast语法树
-  // 2 生成render 方法 render 方法执行执行后的返回结果·就是虚拟DOM
   let ast = parseHTML(template);
-  console.log(ast);
-  console.log(codegen(ast));
+
+  // 2 生成render 方法 render 方法执行执行后的返回结果·就是虚拟DOM
+  let code = codegen(ast);
+  code = `with(this){return ${code}}`;
+  let render = new Function(code); //根据代码生成render函数
+  return render;
 }

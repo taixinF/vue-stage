@@ -1,4 +1,5 @@
 import { compileToFuncrion } from "./compiler";
+import { mountComponent } from "./lifecycle";
 import { initState } from "./state"; //迁移出去再导入实用就好了
 
 export function initMixin(Vue) {
@@ -36,13 +37,15 @@ export function initMixin(Vue) {
         }
       }
       //写了template 就用写了的template
-      if (template) {
+      if (template && el) {
         //这里需要对模板进行编译--核心编译方法
         const render = compileToFuncrion(template);
         ops.render = render; //jsx最终会被编译成h('xxx')
       }
     }
-    ops.render; //最终就可以获取render方法
+    //最终就可以获取render方法
+    mountComponent(vm, el); //组件挂载
+    // 最终就可以获得render方法
     //script 标签应用的 vue.global.js 这个编译过程是在浏览器运行的
     //runtime 是不包含模板编译的,整个编译是打包的时候通过loader来转义.vue文件 只有永runtime的时候不能使用template
   };

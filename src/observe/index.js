@@ -41,12 +41,10 @@ export function defineReactive(target, key, value) {
   //闭包-不会销毁
   Object.defineProperty(target, key, {
     get() {
-      console.log("取值", key);
       //取值的时候执行get
       return value;
     },
     set(newValue) {
-      console.log("设置值");
       //修改的时候会执行set
       if (newValue === value) return;
       observe(newValue);
