@@ -1,3 +1,4 @@
+import { initGlobalAPI } from "./gloablAPI";
 import { initMixin } from "./init";
 import { initLifeCycle } from "./lifecycle";
 import { nextTick } from "./observe/wacher";
@@ -9,5 +10,6 @@ function Vue(options) {
 Vue.prototype.$nextTick = nextTick;
 initMixin(Vue); //扩展了 init方法
 initLifeCycle(Vue);
+initGlobalAPI(Vue);
 
 export default Vue;

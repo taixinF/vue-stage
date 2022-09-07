@@ -85,3 +85,11 @@ export function mountComponent(vm, el) {
 // 3 将ast语法树转换成render函数 4 后续每次数据更新可以只执行render函数（无需再次执行ast转化的过程）
 //render函数会去产生虚拟节点(使用响应式数据)
 //更具生成的虚拟节点创造了真实的DOM
+
+export function callHook(vm, hook) {
+  //调用钩子函数
+  const handlers = vm.$options[hook];
+  if (handlers) {
+    handlers.forEach((handler) => handler.call(vm));
+  }
+}

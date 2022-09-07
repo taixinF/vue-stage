@@ -1,6 +1,7 @@
 import { compileToFuncrion } from "./compiler";
-import { mountComponent } from "./lifecycle";
+import { mountComponent, callHook } from "./lifecycle";
 import { initState } from "./state"; //迁移出去再导入实用就好了
+import { mergeOptions } from "./utils";
 
 export function initMixin(Vue) {
   //就是给Vue增加init方法
@@ -8,10 +9,14 @@ export function initMixin(Vue) {
     //用于初始化
     //vue vm $options 就是获取用户的配置-VuE的时候所有$都是自己的属性
     const vm = this;
-    vm.$options = options; //将用户的选项挂载到实例上
 
+    //我们定义的全局指令和过滤器....都会挂载到实例上
+    vm.$options = mergeOptions(this.constructor.options, options); //将用户的选项挂载到实例上
+
+    callHook(vm, "beforeCreate");
     //初始化状态
     initState(vm);
+    callHook(vm, "create");
     //todo....
 
     //初始化模板
