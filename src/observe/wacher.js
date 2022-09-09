@@ -1,4 +1,4 @@
-import Dep from "./dep";
+import Dep, { popTarget, pushTarget } from "./dep";
 
 let id = 0;
 //组件化 服用好维护 局部更新
@@ -12,7 +12,10 @@ class Watcher {
     this.getter = fn;
     this.deps = []; //比如组件卸载 后续我们实现计算属性和一些清理工作需要用到
     this.depsId = new Set();
-    this.get();
+    this.lazy = options.lazy;
+    this.dirty = this.lazy; //缓存值
+    this.vm = vm;
+    this.lazy ? undefined : this.get();
   }
   addDep(dep) {
     //一个组件 对应着 多个属性 重复的属性也不用记录
@@ -23,10 +26,16 @@ class Watcher {
       dep.addSub(this); //wathcaer已经记住了dep
     }
   }
+  evaluate() {
+    this.value = this.get(); //获取用户函数的返回值并且海员哦标识为脏
+    this.dirty = false;
+  }
   get() {
-    Dep.target = this; //静态属性只有一份
-    this.getter(); //回去vm上取值
-    Dep.target = null;
+    //this is watcher
+    pushTarget(this); //静态属性只有一份
+    let value = this.getter.call(this.vm); //回去vm上取值  --问题取不到vm 。call一下
+    popTarget();
+    return value;
   }
   updata() {
     //缓存更新

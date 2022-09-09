@@ -24,6 +24,7 @@ export function initMixin(Vue) {
       vm.$mount(options.el); //实现数据的挂在
     }
   };
+  
   Vue.prototype.$mount = function (el) {
     const vm = this;
     el = document.querySelector(el);

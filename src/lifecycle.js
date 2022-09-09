@@ -51,7 +51,7 @@ export function initLifeCycle(Vue) {
   };
   //_c('div',{},...children)
   Vue.prototype._c = function () {
-    console.log(this, ...arguments);
+    // console.log(this, ...arguments);
     return createElementVNode(this, ...arguments);
   };
   //_v(text)
@@ -64,7 +64,7 @@ export function initLifeCycle(Vue) {
   };
   Vue.prototype._render = function () {
     //让with中的this指向vm 当渲染的时候实例中取值 我们就可以将属性和视图绑定在一起
-
+    const vm = this;
     return vm.$options.render.call(this); //通过ast语转义后生成的render方法
   };
 }
