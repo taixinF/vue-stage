@@ -12,4 +12,8 @@ initMixin(Vue); //扩展了 init方法
 initLifeCycle(Vue);
 initGlobalAPI(Vue);
 
+
+
 export default Vue;
+
+

@@ -1,3 +1,4 @@
+import Dep from "./observe/dep";
 import { observe } from "./observe/index";
 import Watcher from "./observe/wacher";
 
@@ -70,6 +71,9 @@ function createComputedGetter(key) {
     if (watcher.dirty) {
       //如果是脏的就去执行 用户传入的函数
       watcher.evaluate(); //球之后dirty 变为了false 下刺就不取值了
+    }
+    if (Dep.target) {
+      watcher.depend();
     }
     return watcher.value;
   };
