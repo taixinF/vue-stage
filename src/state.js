@@ -11,7 +11,33 @@ export function initState(vm) {
   if (opts.computed) {
     initComputed(vm);
   }
+  if (opts.watch) {
+    initWatch(vm);
+  }
 }
+
+function initWatch(vm) {
+  let watch = vm.$options.watch;
+  for (const key in watch) {
+    const handler = watch[key];
+    if (Array.isArray(handler)) {
+      for (let i = 0; i < handler.length; i++) {
+        createWatcher(vm, key, handler);
+      }
+    } else {
+      createWatcher(vm, key, handler);
+    }
+  }
+}
+
+function createWatcher(vm, key, handler) {
+  //字符串 函数
+  if (typeof handler === "string") {
+    handler = vm[handler];
+  }
+  return vm.$watch(key, handler);
+}
+
 function proxy(vm, target, key) {
   Object.defineProperty(vm, key, {
     get() {
@@ -48,7 +74,6 @@ function initComputed(vm) {
 
     //我们需要监控计算属性中的get变化
     let fn = typeof userDef === "function" ? userDef : userDef.get;
-
     //如果直接 new Watcher 默认就会执行fn 将属性和watcher对应起来
     watchers[key] = new Watcher(vm, fn, { lazy: true });
 
@@ -56,7 +81,7 @@ function initComputed(vm) {
   }
 }
 function defineComputed(target, key, userDef) {
-  const setter = userDef.get || (() => {});
+  const setter = userDef.set || (() => {});
   //通过实力拿到对应的属性
   Object.defineProperty(target, key, {
     get: createComputedGetter(key),

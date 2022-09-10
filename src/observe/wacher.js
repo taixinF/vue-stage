@@ -6,16 +6,25 @@ let id = 0;
 //每一个属性有一个dep(属性就是被观察者),wathcer就是观察者(属性变化了会通知观察者来更新)-> 观察者模式
 class Watcher {
   //不同的组件有不同的watcher 目前只有一个实例
-  constructor(vm, fn, options) {
+  constructor(vm, exprOrfn, options, cb) {
     this.id = id++;
     this.renderWatcher = options;
-    this.getter = fn;
+
+    if (typeof exprOrfn === "string") {
+      this.getter = function () {
+        return vm[exprOrfn];
+      };
+    } else {
+      this.getter = exprOrfn; //意味着调用这个函数可以发生取值操作
+    }
     this.deps = []; //比如组件卸载 后续我们实现计算属性和一些清理工作需要用到
     this.depsId = new Set();
     this.lazy = options.lazy;
+    this.cb = cb;
     this.dirty = this.lazy; //缓存值
     this.vm = vm;
-    this.lazy ? undefined : this.get();
+    this.user = options.user; //标识是否是用户自己的watcher
+    this.value = this.lazy ? undefined : this.get();
   }
   addDep(dep) {
     //一个组件 对应着 多个属性 重复的属性也不用记录
@@ -37,13 +46,29 @@ class Watcher {
     popTarget();
     return value;
   }
+  depend() {
+    let i = this.deps.length;
+    while (i--) {
+      //dep.depend()
+      this.deps[i].depend();
+    }
+  }
   updata() {
-    //缓存更新
-    queueWatcher(this); //把当前的watcher暂存起来
-    // this.get(); //重新渲染    //多次渲染
+    if (this.lazy) {
+      this.dirty = true;
+    } else {
+      //缓存更新
+      queueWatcher(this); //把当前的watcher暂存起来
+      // this.get(); //重新渲染    //多次渲染
+    }
   }
   run() {
-    this.get(); //缓存渲染
+    let oldValue = this.value;
+    let newValue = this.get(); //缓存渲染
+
+    if (this.user) {
+      this.cb.call(this.vm, newValue, oldValue);
+    }
   }
 }
 let queue = [];

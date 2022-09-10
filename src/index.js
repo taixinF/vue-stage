@@ -1,7 +1,7 @@
 import { initGlobalAPI } from "./gloablAPI";
 import { initMixin } from "./init";
 import { initLifeCycle } from "./lifecycle";
-import { nextTick } from "./observe/wacher";
+import Watcher, { nextTick } from "./observe/wacher";
 
 //将所有的方法都耦合在一起
 function Vue(options) {
@@ -12,8 +12,9 @@ initMixin(Vue); //扩展了 init方法
 initLifeCycle(Vue);
 initGlobalAPI(Vue);
 
-
-
 export default Vue;
 
-
+Vue.prototype.$watch = function (exprOrFn, cb, options = {}) {
+  //()=>vm.firstname
+  new Watcher(this, exprOrFn, { user: true }, cb);
+};
