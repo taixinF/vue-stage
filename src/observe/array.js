@@ -45,6 +45,9 @@ methods.forEach((method) => {
       console.log(ob);
       ob.observeArray(inserted);
     }
+
+    console.log(ob);
+    ob.dep.notify();
     return result;
   };
 });

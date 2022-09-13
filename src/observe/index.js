@@ -4,6 +4,7 @@ import Dep from "./dep";
 class Observer {
   //观测数据
   constructor(data) {
+    this.dep = new Dep();
     //Object.defineProperty只能劫持已经存在的属性
     // 后增的或者删除的是不知道的
     // （vue里面会为此单独写一些api $set $delete 是为了来弥补这个缺陷）
@@ -36,8 +37,18 @@ class Observer {
   }
 }
 
+function dependArray(value) {
+  for (let i = 0; i < value.length; i++) {
+    let current = value[i];
+    current.__ob__ && current.__ob__.dep.depend();
+    if (Array.isArray(current)) {
+      dependArray(current);
+    }
+  }
+}
+
 export function defineReactive(target, key, value) {
-  observe(value); //对所有的属性都进行数据劫持
+  let childOb = observe(value); //对所有的属性都进行数据劫持
   //属性劫持
   let dep = new Dep(); //每一个属性都有dep
   //闭包-不会销毁
@@ -46,6 +57,12 @@ export function defineReactive(target, key, value) {
       //取值的时候执行get
       if (Dep.target) {
         dep.depend(); //让这个属性的收集器记住当前的watcher
+        if (childOb) {
+          childOb.dep.depend(); //让胡祖和对象本身也是先依赖收集
+          if (Array.isArray(value)) {
+            dependArray(value);
+          }
+        }
       }
       return value;
     },
