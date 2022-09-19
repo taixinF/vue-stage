@@ -1,6 +1,8 @@
 // rollup 默认到处一个对象 作为打包的配置文件
 import babel from "rollup-plugin-babel";
 import resolve from "@rollup/plugin-node-resolve";
+import cleanup from "rollup-plugin-cleanup";
+import { terser } from "rollup-plugin-terser";
 export default {
   input: "./src/index.js", //入口
   output: {
@@ -11,10 +13,12 @@ export default {
     sourcemap: true, //希望可以调试源代码
   },
   plugins: [
+    terser(),
+    cleanup(),
     babel({
       exclude: "node_modules/**",
     }),
-    resolve()
+    resolve(),
   ],
 };
 

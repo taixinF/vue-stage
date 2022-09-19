@@ -15,7 +15,6 @@ function createElm(vnode) {
   }
   return vnode.el;
 }
-
 function patchProps(el, props) {
   for (const key in props) {
     if (key === "style") {
@@ -28,7 +27,6 @@ function patchProps(el, props) {
     }
   }
 }
-
 function patch(oldVNode, vnode) {
   //写的是初渲染流程
   const isRealElement = oldVNode.nodeType;
